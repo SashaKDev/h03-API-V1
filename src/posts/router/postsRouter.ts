@@ -1,21 +1,21 @@
 import {Router, Request, Response} from "express";
-import {db} from "../../db/in-memory.db";
+// import {db} from "../../db/in-memory.db";
 import {basicAuthMiddleware} from "../../auth/middlewares/basicAuthMiddleware";
 import {postInputDtoValidation} from "../validation/postInputDtoValidation";
 import {inputValidationResult} from "../../core/middlewares/validation/inputValidationResult";
 import {Post} from "../types/post";
 import {idValidation} from "../../core/middlewares/validation/paramValidation";
 import {getAllPostsHandler} from "./handlers/getAllPostsHandler";
-import {getPostHandler} from "./handlers/getPostHandler";
+// import {getPostHandler} from "./handlers/getPostHandler";
 import {createPostHandler} from "./handlers/createPostHandler";
-import {updatePostHandler} from "./handlers/updatePostHandler";
-import {deletePostHandler} from "./handlers/deletePostHandler";
+// import {updatePostHandler} from "./handlers/updatePostHandler";
+// import {deletePostHandler} from "./handlers/deletePostHandler";
 
 export const postsRouter = Router({});
 
 postsRouter.get('/', getAllPostsHandler);
 
-postsRouter.get('/:id', getPostHandler);
+// postsRouter.get('/:id', getPostHandler);
 
 postsRouter.post('/',
     basicAuthMiddleware,
@@ -24,17 +24,17 @@ postsRouter.post('/',
     createPostHandler
 );
 
-postsRouter.put('/:id',
-    basicAuthMiddleware,
-    idValidation,
-    postInputDtoValidation,
-    inputValidationResult,
-    updatePostHandler
-);
+// postsRouter.put('/:id',
+//     basicAuthMiddleware,
+//     idValidation,
+//     postInputDtoValidation,
+//     inputValidationResult,
+//     updatePostHandler
+// );
 
-postsRouter.delete('/:id',
-    basicAuthMiddleware,
-    idValidation,
-    inputValidationResult,
-    deletePostHandler
-);
+// postsRouter.delete('/:id',
+//     basicAuthMiddleware,
+//     idValidation,
+//     inputValidationResult,
+//     deletePostHandler
+// );
