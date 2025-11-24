@@ -2,9 +2,9 @@ import {Request, Response} from "express";
 import {blogsRepository} from "../../repositories/blogsRepository";
 import {BlogInputDto} from "../../dto/blog-input.dto";
 
-export const updateBlogHandler = (req: Request, res: Response) => {
-    const foundBlog = blogsRepository.findById(req.params.id);
-    if (!foundBlog) {
+export const updateBlogHandler = async (req: Request, res: Response) => {
+    const blog = await blogsRepository.findById(req.params.id);
+    if (!blog) {
         res.sendStatus(404);
         return;
     }
@@ -13,6 +13,12 @@ export const updateBlogHandler = (req: Request, res: Response) => {
         description: req.body.description,
         websiteUrl: req.body.websiteUrl,
     }
-    blogsRepository.update(req.params.id, dto);
+    try {
+        await blogsRepository.update(req.params.id, dto);
+    } catch (error) {
+        res.sendStatus(500);
+        return;
+    }
     res.sendStatus(204);
+    return;
 }
