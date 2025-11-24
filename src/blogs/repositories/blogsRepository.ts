@@ -1,31 +1,45 @@
 import {Blog} from "../types/blog";
-import {db} from "../../db/in-memory.db";
+// import {db} from "../../db/in-memory.db";
 import {BlogInputDto} from "../dto/blog-input.dto";
+import {ObjectId, WithId} from "mongodb";
+import {blogsCollection} from "../../db/mongo.db";
 
 
 export const blogsRepository = {
-    findAll(): Blog[] {
-        return db.blogs
+    async findAll(): Promise<WithId<Blog>[]>{
+        return  await blogsCollection.find().toArray();
     },
 
-    findById(id: string): Blog | null {
-        return db.blogs.find(blog => blog.id === id) ?? null;
+    async findById(id: string): Promise<WithId<Blog> | null>{
+        return await blogsCollection.findOne({_id: new ObjectId(id)});
     },
 
-    create(blog: Blog) {
-        db.blogs.push(blog);
+    async create(blog: Blog): Promise<WithId<Blog>> {
+        const insertResult = await blogsCollection.insertOne(blog);
+        return {...blog, _id: insertResult.insertedId}
+
     },
 
-    update(id: string, dto: BlogInputDto) {
-        const foundBlog = db.blogs.find(blog => blog.id === id);
-        if (foundBlog) {
-            foundBlog.name = dto.name;
-            foundBlog.description = dto.description;
-            foundBlog.websiteUrl = dto.websiteUrl;
+    async update(id: string, dto: BlogInputDto): Promise<void> {
+        const updateResult = await blogsCollection.updateOne(
+            {_id: new ObjectId(id)},
+            {$set:
+                    {
+                        name: dto.name,
+                        description: dto.description,
+                        websiteUrl: dto.websiteUrl,
+                    }
+            }
+            );
+        if (updateResult.matchedCount === 0) {
+            throw new Error("No blogs found.");
         }
     },
 
-    delete(id: string) {
-        db.blogs = db.blogs.filter(blog => blog.id !== id);
+    async delete(id: string): Promise<void> {
+        const deleteResult = await blogsCollection.deleteOne({_id: new ObjectId(id)});
+        if (deleteResult.deletedCount === 0) {
+            throw new Error("No blogs found.");
+        }
     }
 }
