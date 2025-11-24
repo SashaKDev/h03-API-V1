@@ -1,17 +1,21 @@
 import {Request, Response} from 'express';
-import {db} from "../../../db/in-memory.db";
 import {Blog} from "../../types/blog";
 import {blogsRepository} from "../../repositories/blogsRepository";
 
-export const createBlogHandler = (req: Request, res: Response) => {
+export const createBlogHandler = async (req: Request, res: Response) => {
     const newBlog: Blog = {
-        id: (db.blogs.length + 1).toString(),
         name: req.body.name,
         description: req.body.description,
         websiteUrl: req.body.websiteUrl,
+        createdAt: new Date().toISOString(),
+        isMembership: false,
     }
 
-    blogsRepository.create(newBlog);
+    try {
+        await blogsRepository.create(newBlog);
+    } catch (error) {
+        console.log(error);
+    }
 
     res
         .status(201)
