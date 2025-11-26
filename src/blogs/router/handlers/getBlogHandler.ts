@@ -1,5 +1,6 @@
 import {Request, Response} from 'express';
 import {blogsRepository} from "../../repositories/blogsRepository";
+import {mapBlogToViewModel} from "../../mapers/mapBlogToViewModel";
 
 export const getBlogHandler = async (req: Request, res: Response) => {
     const foundCourse = await blogsRepository.findById(req.params.id);
@@ -9,5 +10,5 @@ export const getBlogHandler = async (req: Request, res: Response) => {
     }
     res
         .status(200)
-        .json(foundCourse);
+        .json(mapBlogToViewModel(foundCourse));
 }
