@@ -17,6 +17,7 @@ export const inputValidationResult = (req: Request, res: Response, next: NextFun
 
     if (errors.length) {
         res.status(400).json({errorsMessages: errors});
+        return;
     }
     next();
 }
