@@ -2,6 +2,7 @@ import {Request, Response} from 'express';
 import {Post} from "../../types/post";
 import {blogsRepository} from "../../../blogs/repositories/blogsRepository";
 import {postsRepository} from "../../repositories/postsRepository";
+import {mapPostToViewModel} from "../../mapers/mapPostToViewModel";
 
 export const createPostHandler = async (req: Request, res: Response) => {
     const foundBlog = await blogsRepository.findById(req.body.blogId);
@@ -20,5 +21,5 @@ export const createPostHandler = async (req: Request, res: Response) => {
     const createdPost = await postsRepository.create(newPost);
     res
         .status(201)
-        .json(createdPost);
+        .json(mapPostToViewModel(createdPost));
 }

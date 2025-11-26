@@ -1,23 +1,26 @@
 import {Request, Response} from 'express';
 import {Blog} from "../../types/blog";
 import {blogsRepository} from "../../repositories/blogsRepository";
+import {mapBlogToViewModel} from "../../mapers/mapBlogToViewModel";
 
 export const createBlogHandler = async (req: Request, res: Response) => {
-    const newBlog: Blog = {
-        name: req.body.name,
-        description: req.body.description,
-        websiteUrl: req.body.websiteUrl,
-        createdAt: new Date().toISOString(),
-        isMembership: false,
-    }
-
     try {
-        await blogsRepository.create(newBlog);
-    } catch (error) {
-        console.log(error);
-    }
+        const newBlog: Blog = {
+            name: req.body.name,
+            description: req.body.description,
+            websiteUrl: req.body.websiteUrl,
+            createdAt: new Date().toISOString(),
+            isMembership: false,
+        }
 
-    res
-        .status(201)
-        .json(newBlog)
+
+        const createdBlog = await blogsRepository.create(newBlog);
+        const createdBlogViewModel = mapBlogToViewModel(createdBlog);
+
+        res
+            .status(201)
+            .json(createdBlogViewModel);
+    } catch (error) {
+        res.sendStatus(500);
+    }
 }
