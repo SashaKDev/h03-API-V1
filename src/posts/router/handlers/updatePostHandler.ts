@@ -1,27 +1,27 @@
-// import {Request, Response} from 'express';
-// import {postsRepository} from "../../repositories/postsRepository";
-// import {blogsRepository} from "../../../blogs/repositories/blogsRepository";
-// import {PostInputDto} from "../../dto/post-input.dto";
-//
-// export const updatePostHandler = (req: Request, res: Response) => {
-//     const foundPost = postsRepository.findById(req.params.id);
-//     if (!foundPost) {
-//         res.sendStatus(404);
-//         return;
-//     }
-//     const foundBlog = blogsRepository.findById(req.body.blogId);
-//     if (!foundBlog) {
-//         res.sendStatus(404);
-//         return;
-//     }
-//     const dto: PostInputDto = {
-//         title: req.body.title,
-//         shortDescription:req.body.shortDescription,
-//         content: req.body.content,
-//         blogId: req.body.blogId,
-//     }
-//
-//     postsRepository.update(req.params.id, dto);
-//
-//     res.sendStatus(204);
-// }
+import {Request, Response} from 'express';
+import {postsRepository} from "../../repositories/postsRepository";
+import {PostInputDto} from "../../dto/post-input.dto";
+
+export const updatePostHandler = async (req: Request, res: Response) => {
+
+    const post = await postsRepository.findById(req.params.id);
+    if (!post) {
+        res.sendStatus(404);
+        return;
+    }
+
+    const dto: PostInputDto = {
+        title: req.body.title,
+        shortDescription: req.body.shortDescription,
+        content: req.body.content,
+        blogId:	req.body.blogId,
+    }
+    try {
+        await postsRepository.update(req.params.id, dto);
+    } catch (err) {
+        res.sendStatus(500);
+        return;
+    }
+    res.sendStatus(204);
+
+}
